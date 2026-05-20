@@ -1,61 +1,36 @@
-using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using TMPro;
 
-public class LobbyUI : MonoBehaviour, INetworkRunnerCallbacks
+public class InputHandler : MonoBehaviour, INetworkRunnerCallbacks
 {
-    [SerializeField] private TMP_InputField nameInput;
-    [SerializeField] private Button playButton;
-    [SerializeField] private NetworkObject playerPrefab;
+    private Vector2 direction;
+    private bool jump;
 
-    private NetworkRunner networkRunner;
-
-    private void Start()
+    private void Update()
     {
-        playButton.onClick.AddListener(OnPlayPressed);
+        direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            jump = true;
     }
 
-    private async void OnPlayPressed()
+    public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        playButton.interactable = false;
-
-        networkRunner = gameObject.AddComponent<NetworkRunner>();
-        networkRunner.ProvideInput = true;
-
-        var scene = SceneRef.FromIndex(1);
-        var sceneInfo = new NetworkSceneInfo();
-        sceneInfo.AddSceneRef(scene);
-
-        await networkRunner.StartGame(new StartGameArgs
+        var data = new NetworkInputData
         {
-            GameMode = GameMode.AutoHostOrClient,
-            SessionName = "PillRunRoom",
-            Scene = sceneInfo,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-        });
+            Direction = direction,
+            Jump = jump
+        };
+
+        input.Set(data);
+        jump = false;
     }
 
-    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
-    {
-        if (runner.IsServer)
-        {
-            Vector3 spawnPos = new Vector3(Random.Range(-3f, 3f), 1f, 0f);
-            runner.Spawn(playerPrefab, spawnPos, Quaternion.identity, player);
-        }
-    }
-
-    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
-    {
-        // Despawnear jugador si se va
-    }
-
-    
-    // callbacks 
-    public void OnInput(NetworkRunner runner, NetworkInput input) { }
+    // Callbacks obligatorios vacíos
+    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
+    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason reason) { }
     public void OnConnectedToServer(NetworkRunner runner) { }
