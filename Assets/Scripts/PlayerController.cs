@@ -3,29 +3,38 @@ using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float jumpForce = 5f;
+    
+    
+    public float velocidad = 5f;
+    
+    public float jumpforce = 5f;
 
-    private NetworkCharacterController NCC;
+    
+    private NetworkCharacterController ncc;
 
+    // cosas de fusion
     [Networked] public int CheckpointIndex { get; set; }
     [Networked] public NetworkBool IsFinished { get; set; }
 
     private void Awake()
     {
-        NCC = GetComponent<NetworkCharacterController>();
+        // busco el componente en el mismo objeto
+        ncc = GetComponent<NetworkCharacterController>();
     }
 
+    
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData input))
         {
-            Vector3 move = new Vector3(input.Direction.x, 0, input.Direction.y) * moveSpeed;
-            NCC.Move(move * Runner.DeltaTime);
+            
+            Vector3 movimiento = new Vector3(input.Direction.x, 0, input.Direction.y) * velocidad;
+            ncc.Move(movimiento * Runner.DeltaTime);
 
-            if (input.Jump && NCC.Grounded)
+            // salta si esta en el piso
+            if (input.Jump && ncc.Grounded)
             {
-                NCC.Jump(NCC.Grounded,jumpForce);
+                ncc.Velocity = new Vector3(ncc.Velocity.x, jumpforce, ncc.Velocity.z);
             }
         }
     }

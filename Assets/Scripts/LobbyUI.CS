@@ -2,59 +2,72 @@ using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
 public class LobbyUI : MonoBehaviour, INetworkRunnerCallbacks
 {
-    [SerializeField] private TMP_InputField nameInput;
-    [SerializeField] private Button playButton;
-    [SerializeField] private NetworkObject playerPrefab;
+    // referencias a los objetos de la UI, los asigno desde el inspector
+    public TMP_InputField user;
+    public Button playButton;
 
-    private NetworkRunner networkRunner;
+
+    public NetworkObject pill;
+    
+    public NetworkObject gameManager;
+    private NetworkRunner runner;
 
     private void Start()
     {
-        playButton.onClick.AddListener(OnPlayPressed);
+        playButton.onClick.AddListener(OnBotonJugarPresionado);
     }
 
-    private async void OnPlayPressed()
+    private async void OnBotonJugarPresionado()
     {
-        playButton.interactable = false;
+        
+        //playButton.interactable = false;
 
-        networkRunner = gameObject.AddComponent<NetworkRunner>();
-        networkRunner.ProvideInput = true;
+        runner = gameObject.AddComponent<NetworkRunner>();
+        runner.ProvideInput = true;
 
-        var scene = SceneRef.FromIndex(1);
-        var sceneInfo = new NetworkSceneInfo();
-        sceneInfo.AddSceneRef(scene);
+        // agarra la scene 1
+        var escena = SceneRef.FromIndex(1);
+        
+        var infoEscena = new NetworkSceneInfo();
+        infoEscena.AddSceneRef(escena);
 
-        await networkRunner.StartGame(new StartGameArgs
+        // si no hay un host el primero que entra hace de hhost, y le paso los parametros
+        await runner.StartGame(new StartGameArgs
         {
-            GameMode = GameMode.AutoHostOrClient,
-            SessionName = "PillRunRoom",
-            Scene = sceneInfo,
+            GameMode = GameMode.AutoHostOrClient, SessionName = "PillRunRoom", Scene = infoEscena,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
     }
 
+    // Fusion llama este metodo cuando un jugador se une a la partida
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        
         if (runner.IsServer)
         {
-            Vector3 spawnPos = new Vector3(Random.Range(-3f, 3f), 1f, 0f);
-            runner.Spawn(playerPrefab, spawnPos, Quaternion.identity, player);
+            
+            if (GameManager.Instance == null)
+            {
+                runner.Spawn(gameManager, Vector3.zero, Quaternion.identity);
+            }
+
+            
+            Vector3 spawner = new Vector3(Random.Range(-3f, 3f), 1f, 0f);
+            runner.Spawn(pill, spawner, Quaternion.identity, player);
         }
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        // Despawnear jugador si se va
+        // aca tengo que sacar al jugador
     }
 
-    
-    // callbacks 
+    // callbacks obligatorios vacios
     public void OnInput(NetworkRunner runner, NetworkInput input) { }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason reason) { }

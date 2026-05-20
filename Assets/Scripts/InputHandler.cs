@@ -5,30 +5,35 @@ using UnityEngine;
 
 public class InputHandler : MonoBehaviour, INetworkRunnerCallbacks
 {
-    private Vector2 direction;
-    private bool jump;
+    // guardo el input del jugador cada frame
+    private Vector2 direccion;
+    private bool salto;
 
     private void Update()
     {
-        direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        // leo el input
+        
+        direccion = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
+        // saltar
         if (Input.GetKeyDown(KeyCode.Space))
-            jump = true;
+            salto = true;
     }
 
+     
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         var data = new NetworkInputData
         {
-            Direction = direction,
-            Jump = jump
+            Direction = direccion,
+            Jump = salto
         };
 
         input.Set(data);
-        jump = false;
+        salto = false; 
     }
 
-    // Callbacks obligatorios vacíos
+    // callbacks
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
