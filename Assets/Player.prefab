@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 7958150427520014123}
   - component: {fileID: 6314514579710078627}
   - component: {fileID: -8681574550978742822}
+  - component: {fileID: 7204141387472817963}
+  - component: {fileID: 1554456619417590985}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -133,6 +135,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 6314514579710078627}
   - {fileID: -8681574550978742822}
+  - {fileID: 1554456619417590985}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &7958150427520014123
 CharacterController:
@@ -174,9 +177,9 @@ MonoBehaviour:
   _stateAuthorityChangeErrorCorrectionDelta: 0
   gravity: -20
   jumpImpulse: 8
-  acceleration: 10
-  braking: 10
-  maxSpeed: 2
+  acceleration: 20
+  braking: 20
+  maxSpeed: 8
   rotationSpeed: 15
 --- !u!114 &-8681574550978742822
 MonoBehaviour:
@@ -191,4 +194,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 8, z: -6}
-  smoothSpeed: 5
+  velocidad: 5
+--- !u!114 &7204141387472817963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8039726376581365771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5c088e2fc31ca94ba833b8e66554237, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1554456619417590985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8039726376581365771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26f7ede1423c7a47b8408032819971a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocidad: 5
+  jumpforce: 5
+  _CheckpointIndex: 0
+  _IsFinished:
+    _value: 0

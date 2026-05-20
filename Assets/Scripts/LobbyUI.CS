@@ -16,30 +16,41 @@ public class LobbyUI : MonoBehaviour, INetworkRunnerCallbacks
     
     public NetworkObject gameManager;
     private NetworkRunner runner;
+    
+    private void Awake()
+    {
+        runner = GetComponent<NetworkRunner>();
+        if (runner == null)
+            runner = gameObject.AddComponent<NetworkRunner>();
+    
+        
+       
+    }
 
     private void Start()
     {
-        playButton.onClick.AddListener(OnBotonJugarPresionado);
+        playButton.onClick.AddListener(OnPlayButtonPressed);
     }
 
-    private async void OnBotonJugarPresionado()
+    private async void OnPlayButtonPressed()
     {
         
-        //playButton.interactable = false;
+        playButton.interactable = false;
 
-        runner = gameObject.AddComponent<NetworkRunner>();
         runner.ProvideInput = true;
 
         // agarra la scene 1
         var escena = SceneRef.FromIndex(1);
-        
+    
         var infoEscena = new NetworkSceneInfo();
         infoEscena.AddSceneRef(escena);
 
-        // si no hay un host el primero que entra hace de hhost, y le paso los parametros
+        // si no hay un host el primero que entra hace de host
         await runner.StartGame(new StartGameArgs
         {
-            GameMode = GameMode.AutoHostOrClient, SessionName = "PillRunRoom", Scene = infoEscena,
+            GameMode = GameMode.AutoHostOrClient, 
+            SessionName = "PillRunRoom", 
+            Scene = infoEscena,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
     }
@@ -57,7 +68,7 @@ public class LobbyUI : MonoBehaviour, INetworkRunnerCallbacks
             }
 
             
-            Vector3 spawner = new Vector3(Random.Range(-3f, 3f), 1f, 0f);
+            Vector3 spawner = new Vector3(Random.Range(-1f, 1f), 1f, 0f);
             runner.Spawn(pill, spawner, Quaternion.identity, player);
         }
     }
