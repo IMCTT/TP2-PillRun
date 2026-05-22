@@ -11,12 +11,20 @@ public class InputHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     private void Update()
     {
+        
+        if (GameManager.Instance == null || GameManager.Instance.GamePhase != 1)
+        {
+            direccion = Vector2.zero;
+            salto = false;
+            return;
+        }
+        
         // leo el input
         
         direccion = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
         // saltar
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             salto = true;
     }
 

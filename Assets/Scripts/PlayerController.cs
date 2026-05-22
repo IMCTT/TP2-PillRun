@@ -5,7 +5,7 @@ public class PlayerController : NetworkBehaviour
 {
     
     
-    public float velocidad = 5f;
+    public float velocidad = 6f;
     
     public float jumpforce = 5f;
 
@@ -25,12 +25,9 @@ public class PlayerController : NetworkBehaviour
     
     public override void Spawned()
     {
-        Debug.Log("Spawned! HasInputAuthority: " + HasInputAuthority);
-    
         if (HasInputAuthority)
         {
             var inputHandler = GetComponent<InputHandler>();
-            Debug.Log("InputHandler encontrado: " + (inputHandler != null));
             if (inputHandler != null)
                 Runner.AddCallbacks(inputHandler);
         }
@@ -38,15 +35,21 @@ public class PlayerController : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
+        if (GameManager.Instance == null || GameManager.Instance.GamePhase != 1) return;
+        
         if (GetInput(out NetworkInputData input))
         {
-            Vector3 movimiento = new Vector3(input.Direction.x, 0, input.Direction.y) * velocidad;
-            ncc.Move(movimiento * Runner.DeltaTime);
+            Vector3 movimiento = new Vector3(input.Direction.x, 0, input.Direction.y);
+            ncc.Move(movimiento);
 
             if (input.Jump && ncc.Grounded)
             {
-                ncc.Velocity = new Vector3(ncc.Velocity.x, jumpforce, ncc.Velocity.z);
+                ncc.Jump();
             }
         }
+    }
+    public override void Render()
+    {
+        // la interpolacion visual la maneja el NCC automaticamente
     }
 }
