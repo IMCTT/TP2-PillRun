@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    // UI
     public TMP_Text timer;
     public TMP_Text fase;
     public TMP_Text ganador;
@@ -12,16 +11,13 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        
         startButton.onClick.AddListener(OnBotonIniciarPresionado);
         ganador.gameObject.SetActive(false);
-        startButton.gameObject.SetActive(false);
-        
+        startButton.gameObject.SetActive(false); 
     }
 
     private void OnBotonIniciarPresionado()
     {
-        // solo funciona con el host
         if (GameManager.Instance != null && GameManager.Instance.Runner.IsServer)
         {
             GameManager.Instance.Rpc_StartGame();
@@ -32,15 +28,17 @@ public class UIManager : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
 
-        // solo le aparece el boton al host
+        // solo le aparece el boton al host cuando estamos en el lobby
         bool soyHost = GameManager.Instance.Runner.IsServer;
-        startButton.gameObject.SetActive(soyHost);
+        startButton.gameObject.SetActive(soyHost && GameManager.Instance.GamePhase == 0);
 
-        // falta hacer el tiempo
+        
         float tiempo = GameManager.Instance.RemainingTime;
-     
+        int minutos = Mathf.FloorToInt(tiempo / 60f);
+        int segundos = Mathf.FloorToInt(tiempo % 60f);
+        timer.text = minutos + ":" + segundos.ToString("00");
 
-        // estados de partida
+       
         switch (GameManager.Instance.GamePhase)
         {
             case 0:

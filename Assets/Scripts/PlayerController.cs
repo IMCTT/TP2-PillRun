@@ -48,8 +48,22 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
-    public override void Render()
+    public Transform[] checkpointPositions;
+
+    public void Respawn()
     {
-        // la interpolacion visual la maneja el NCC automaticamente
+        Vector3 posRespawn = Vector3.zero;
+
+        //si pase algun checkpoint respawnea ahi, sino al inicio
+        if (CheckpointIndex > 0 && checkpointPositions.Length >= CheckpointIndex)
+        {
+            posRespawn = checkpointPositions[CheckpointIndex - 1].position + Vector3.up * 1f;
+        }
+        else
+        {
+            posRespawn = new Vector3(0f, 1f, 0f); 
+        }
+
+        ncc.Teleport(posRespawn);
     }
 }
