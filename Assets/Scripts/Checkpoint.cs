@@ -9,9 +9,17 @@ public class Checkpoint : MonoBehaviour
     {
         var jugador = other.GetComponent<PlayerController>();
         if (jugador == null) return;
+        
        
         if (!jugador.HasStateAuthority) return;
-        Debug.Log("Checkpoint " + numero + " alcanzado!");
+        
+        if (jugador.CheckpointIndex < numero)
+        {
+            jugador.CheckpointIndex = numero;
+            jugador.ultimaPosicionCheckpoint = transform.position + Vector3.up * 1f;
+            Debug.Log("Checkpoint " + numero + " alcanzado!");
+        }
+      
 
       
     }

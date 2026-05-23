@@ -8,7 +8,8 @@ public class PlayerController : NetworkBehaviour
     public float velocidad = 6f;
     
     public float jumpforce = 5f;
-
+    
+    public Vector3 ultimaPosicionCheckpoint = new Vector3(0f, 1f, 0f);
     
     private NetworkCharacterController ncc;
 
@@ -31,10 +32,12 @@ public class PlayerController : NetworkBehaviour
             if (inputHandler != null)
                 Runner.AddCallbacks(inputHandler);
         }
+        
     }
 
     public override void FixedUpdateNetwork()
     {
+        
         if (GameManager.Instance == null || GameManager.Instance.GamePhase != 1) return;
         
         if (GetInput(out NetworkInputData input))
@@ -48,22 +51,10 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
-    public Transform[] checkpointPositions;
-
+    
     public void Respawn()
     {
-        Vector3 posRespawn = Vector3.zero;
-
-        //si pase algun checkpoint respawnea ahi, sino al inicio
-        if (CheckpointIndex > 0 && checkpointPositions.Length >= CheckpointIndex)
-        {
-            posRespawn = checkpointPositions[CheckpointIndex - 1].position + Vector3.up * 1f;
-        }
-        else
-        {
-            posRespawn = new Vector3(0f, 1f, 0f); 
-        }
-
-        ncc.Teleport(posRespawn);
+      
+        ncc.Teleport(ultimaPosicionCheckpoint);
     }
 }

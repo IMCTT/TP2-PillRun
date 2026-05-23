@@ -11,7 +11,7 @@ public class LobbyUI : MonoBehaviour, INetworkRunnerCallbacks
     public TMP_InputField user;
     public Button playButton;
 
-
+    public TMP_Text title;
     public NetworkObject pill;
     
     public NetworkObject gameManager;
@@ -36,6 +36,7 @@ public class LobbyUI : MonoBehaviour, INetworkRunnerCallbacks
     {
         
         playButton.interactable = false;
+        
 
         runner.ProvideInput = true;
 
